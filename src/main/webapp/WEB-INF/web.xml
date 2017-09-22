@@ -1,11 +1,62 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
-  
-  <welcome-file-list>
+	<!--1.配置spring分发器(是总的控制中心 被拦截的url会汇聚到该servlet) -->
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!--配置spring上下文 (从该目录下加载spring mvc的配置文件) -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/classes/spring-mvc*.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>  <!-- tomcat启动后立即加载 -->
+	</servlet>
+	<!--2. 配置spring拦截的url模板 以.do结尾的url -->
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+	<!--3. 注册配置文件读取器，监听spring配置文件的变化 详见 注3 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!--4. 设定配置文件列表 设置全局参数 为3的参数配置信息 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:spring-base.xml</param-value>
+	</context-param>
+
+	<!--5. 编码字符集统一为UTF-8（过滤器） -->
+	<filter>
+		<display-name>encodingFilter</display-name>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+
+
+	<session-config>
+		<session-timeout>15</session-timeout>
+	</session-config>
+	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-</web-app>
+
+</web-app>	
